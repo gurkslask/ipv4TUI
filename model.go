@@ -13,19 +13,21 @@ type (
 )
 
 const (
-	hotPink  = lipgloss.Color("#FF06B7")
+	 hotPink  = lipgloss.Color("#FF06B7")
 	darkGray = lipgloss.Color("#767676")
-	badass = lipgloss.Color("#B4D455")
-	orangeish = lipgloss.Color("#FF9911")
+	ColorR1  = lipgloss.Color("#DC143C")
+	ColorR2 = lipgloss.Color("#F75270")
+	ColorR3 = lipgloss.Color("#F7CAC9")
+	ColorR4 = lipgloss.Color("#FDEBD0")
 )
 
 var (
 	inputStyle    = lipgloss.NewStyle().Foreground(hotPink)
 	continueStyle = lipgloss.NewStyle().Foreground(darkGray)
-	oct1Style     = lipgloss.NewStyle().Foreground(darkGray)
-	oct2Style     = lipgloss.NewStyle().Foreground(hotPink)
-	oct3Style     = lipgloss.NewStyle().Foreground(badass)
-	oct4Style     = lipgloss.NewStyle().Foreground(orangeish)
+	oct1Style     = lipgloss.NewStyle().Foreground(ColorR1)
+	oct2Style     = lipgloss.NewStyle().Foreground(ColorR2)
+	oct3Style     = lipgloss.NewStyle().Foreground(ColorR3)
+	oct4Style     = lipgloss.NewStyle().Foreground(ColorR4)
 )
 
 type model struct {
