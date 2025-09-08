@@ -24,12 +24,13 @@ const (
 )
 
 var (
-	inputStyle    = lipgloss.NewStyle().Foreground(hotPink).Background(ColorBG1)
+	inputStyle    = lipgloss.NewStyle().Foreground(hotPink)
 	continueStyle = lipgloss.NewStyle().Foreground(darkGray).Background(ColorBG2)
 	oct1Style     = lipgloss.NewStyle().Foreground(ColorR1)
 	oct2Style     = lipgloss.NewStyle().Foreground(ColorR2)
 	oct3Style     = lipgloss.NewStyle().Foreground(ColorR3)
 	oct4Style     = lipgloss.NewStyle().Foreground(ColorR4)
+	staticStyle    = lipgloss.NewStyle()
 )
 
 type model struct {
@@ -56,65 +57,73 @@ func initialModel() model {
 	inputs[0].SetValue("192")
 	inputs[0].Focus()
 	inputs[0].CharLimit = 3
-	inputs[0].Width = 4
+	inputs[0].Width = 7
 	inputs[0].Prompt = ""
 	inputs[0].Validate = octetValidator
+	inputs[0].TextStyle = inputStyle
 
 	inputs[1] = textinput.New()
 	inputs[1].Placeholder = "2"
 	inputs[1].SetValue("168")
 	inputs[1].CharLimit = 3
-	inputs[1].Width = 4
+	inputs[1].Width = 7
 	inputs[1].Prompt = ""
 	inputs[1].Validate = octetValidator
+	inputs[1].TextStyle = inputStyle
 
 	inputs[2] = textinput.New()
 	inputs[2].Placeholder = "3"
 	inputs[2].SetValue("0")
 	inputs[2].CharLimit = 3
-	inputs[2].Width = 4
+	inputs[2].Width = 7
 	inputs[2].Prompt = ""
 	inputs[2].Validate = octetValidator
+	inputs[2].TextStyle = inputStyle
 
 	inputs[3] = textinput.New()
 	inputs[3].Placeholder = "4"
 	inputs[3].SetValue("2")
 	inputs[3].CharLimit = 3
-	inputs[3].Width = 4
+	inputs[3].Width = 11
 	inputs[3].Prompt = ""
 	inputs[3].Validate = octetValidator
+	inputs[3].TextStyle = inputStyle
 
 	inputs[4] = textinput.New()
 	inputs[4].Placeholder = "4"
 	inputs[4].SetValue("255")
 	inputs[4].CharLimit = 3
-	inputs[4].Width = 4
+	inputs[4].Width = 7
 	inputs[4].Prompt = ""
 	inputs[4].Validate = octetValidator
+	inputs[4].TextStyle = inputStyle
 
 	inputs[5] = textinput.New()
 	inputs[5].Placeholder = "4"
 	inputs[5].SetValue("255")
 	inputs[5].CharLimit = 3
-	inputs[5].Width = 4
+	inputs[5].Width = 7
 	inputs[5].Prompt = ""
 	inputs[5].Validate = octetValidator
+	inputs[5].TextStyle = inputStyle
 
 	inputs[6] = textinput.New()
 	inputs[6].Placeholder = "4"
 	inputs[6].SetValue("255")
 	inputs[6].CharLimit = 3
-	inputs[6].Width = 4
+	inputs[6].Width = 7
 	inputs[6].Prompt = ""
 	inputs[6].Validate = octetValidator
+	inputs[6].TextStyle = inputStyle
 
 	inputs[7] = textinput.New()
 	inputs[7].Placeholder = "4"
 	inputs[7].SetValue("0")
 	inputs[7].CharLimit = 3
-	inputs[7].Width = 4
+	inputs[7].Width = 7
 	inputs[7].Prompt = ""
 	inputs[7].Validate = octetValidator
+	inputs[7].TextStyle = inputStyle
 	return model{
 		ipaddr:     ip,
 		subnetmask: snm,
@@ -175,15 +184,10 @@ func (m model) View() string {
  %s%s%s%s%s%s%s%s
  %s %s %s %s  %s %s %s %s
 
-
- Binary
- IP-address
+ %s%s
  %s.%s.%s.%s  %s.%s.%s.%s
 
-
-
  Binary
-
  netaddr
  %s
  broadcast
@@ -192,16 +196,16 @@ func (m model) View() string {
  %s
 `,
 
-		inputStyle.Width(20).Render("IP-address"),
-		inputStyle.Width(20).Render("Subnetmask"),
-		inputStyle.Width(5).Render("Oct1"),
-		inputStyle.Width(5).Render("Oct2"),
-		inputStyle.Width(5).Render("Oct3"),
-		inputStyle.Width(5).Render("Oct4"),
-		inputStyle.Width(5).Render("Oct1"),
-		inputStyle.Width(5).Render("Oct2"),
-		inputStyle.Width(5).Render("Oct3"),
-		inputStyle.Width(5).Render("Oct4"),
+		staticStyle.Width(41).Render("IP-address"),
+		staticStyle.Width(20).Render("Subnetmask"),
+		staticStyle.Width(5).Render("Oct1"),
+		staticStyle.Width(5).Render("Oct2"),
+		staticStyle.Width(5).Render("Oct3"),
+		staticStyle.Width(26).Render("Oct4"),
+		staticStyle.Width(5).Render("Oct1"),
+		staticStyle.Width(5).Render("Oct2"),
+		staticStyle.Width(5).Render("Oct3"),
+		staticStyle.Width(5).Render("Oct4"),
 		m.inputs[0].View(),
 		m.inputs[1].View(),
 		m.inputs[2].View(),
@@ -210,14 +214,16 @@ func (m model) View() string {
 		m.inputs[5].View(),
 		m.inputs[6].View(),
 		m.inputs[7].View(),
-		oct1Style.Width(9).Render(string(m.ipBinary[0:8])),
-		oct2Style.Width(9).Render(string(m.ipBinary[8:16])),
-		oct3Style.Width(9).Render(string(m.ipBinary[16:24])),
-		oct4Style.Width(9).Render(string(m.ipBinary[24:32])),
-		oct1Style.Width(9).Render(string(m.subnetBinary[0:8])),
-		oct2Style.Width(9).Render(string(m.subnetBinary[8:16])),
-		oct3Style.Width(9).Render(string(m.subnetBinary[16:24])),
-		oct4Style.Width(9).Render(string(m.subnetBinary[24:32])),
+		staticStyle.Width(41).Render("IP-address"),
+		staticStyle.Width(20).Render("Subnetmask"),
+		oct1Style.Width(8).Render(string(m.ipBinary[0:8])),
+		oct2Style.Width(8).Render(string(m.ipBinary[8:16])),
+		oct3Style.Width(8).Render(string(m.ipBinary[16:24])),
+		oct4Style.Width(12).Render(string(m.ipBinary[24:32])),
+		oct1Style.Width(8).Render(string(m.subnetBinary[0:8])),
+		oct2Style.Width(8).Render(string(m.subnetBinary[8:16])),
+		oct3Style.Width(8).Render(string(m.subnetBinary[16:24])),
+		oct4Style.Width(8).Render(string(m.subnetBinary[24:32])),
 		m.netaddr.PrintDecimal(),
 		m.broadcastaddr.PrintDecimal(),
 		m.err,
