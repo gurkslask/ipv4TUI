@@ -13,17 +13,19 @@ type (
 )
 
 const (
-	 hotPink  = lipgloss.Color("#FF06B7")
+	hotPink  = lipgloss.Color("#FF06B7")
 	darkGray = lipgloss.Color("#767676")
-	ColorR1  = lipgloss.Color("#DC143C")
+	ColorR1  = lipgloss.Color("#DC243C")
 	ColorR2 = lipgloss.Color("#F75270")
 	ColorR3 = lipgloss.Color("#F7CAC9")
 	ColorR4 = lipgloss.Color("#FDEBD0")
+	ColorBG1 = lipgloss.Color("#BADA55")
+	ColorBG2 = lipgloss.Color("#FFFA55")
 )
 
 var (
-	inputStyle    = lipgloss.NewStyle().Foreground(hotPink)
-	continueStyle = lipgloss.NewStyle().Foreground(darkGray)
+	inputStyle    = lipgloss.NewStyle().Foreground(hotPink).Background(ColorBG1)
+	continueStyle = lipgloss.NewStyle().Foreground(darkGray).Background(ColorBG2)
 	oct1Style     = lipgloss.NewStyle().Foreground(ColorR1)
 	oct2Style     = lipgloss.NewStyle().Foreground(ColorR2)
 	oct3Style     = lipgloss.NewStyle().Foreground(ColorR3)
@@ -51,7 +53,7 @@ func initialModel() model {
 
 	inputs[0] = textinput.New()
 	inputs[0].Placeholder = "1"
-	inputs[0].SetValue("2")
+	inputs[0].SetValue("192")
 	inputs[0].Focus()
 	inputs[0].CharLimit = 3
 	inputs[0].Width = 4
@@ -60,7 +62,7 @@ func initialModel() model {
 
 	inputs[1] = textinput.New()
 	inputs[1].Placeholder = "2"
-	inputs[1].SetValue("2")
+	inputs[1].SetValue("168")
 	inputs[1].CharLimit = 3
 	inputs[1].Width = 4
 	inputs[1].Prompt = ""
@@ -68,7 +70,7 @@ func initialModel() model {
 
 	inputs[2] = textinput.New()
 	inputs[2].Placeholder = "3"
-	inputs[2].SetValue("2")
+	inputs[2].SetValue("0")
 	inputs[2].CharLimit = 3
 	inputs[2].Width = 4
 	inputs[2].Prompt = ""
@@ -169,19 +171,18 @@ func (m model) View() string {
 	return fmt.Sprintf(
 		` IP-Calculator
 
-IP-address
- %s %s %s %s
- %s %s %s %s
+ %s%s
+ %s%s%s%s%s%s%s%s
+ %s %s %s %s  %s %s %s %s
+
 
  Binary
- %s.%s.%s.%s
+ IP-address
+ %s.%s.%s.%s  %s.%s.%s.%s
 
- Subnetmask
- %s %s %s %s
- %s %s %s %s
+
 
  Binary
- %s.%s.%s.%s
 
  netaddr
  %s
@@ -190,6 +191,13 @@ IP-address
  %s
  %s
 `,
+
+		inputStyle.Width(20).Render("IP-address"),
+		inputStyle.Width(20).Render("Subnetmask"),
+		inputStyle.Width(5).Render("Oct1"),
+		inputStyle.Width(5).Render("Oct2"),
+		inputStyle.Width(5).Render("Oct3"),
+		inputStyle.Width(5).Render("Oct4"),
 		inputStyle.Width(5).Render("Oct1"),
 		inputStyle.Width(5).Render("Oct2"),
 		inputStyle.Width(5).Render("Oct3"),
@@ -198,22 +206,18 @@ IP-address
 		m.inputs[1].View(),
 		m.inputs[2].View(),
 		m.inputs[3].View(),
-		oct1Style.Render(string(m.ipBinary[0:8])),
-		oct2Style.Render(string(m.ipBinary[8:16])),
-		oct3Style.Render(string(m.ipBinary[16:24])),
-		oct4Style.Render(string(m.ipBinary[24:32])),
-		inputStyle.Width(5).Render("Oct1"),
-		inputStyle.Width(5).Render("Oct2"),
-		inputStyle.Width(5).Render("Oct3"),
-		inputStyle.Width(5).Render("Oct4"),
 		m.inputs[4].View(),
 		m.inputs[5].View(),
 		m.inputs[6].View(),
 		m.inputs[7].View(),
-		oct1Style.Render(string(m.subnetBinary[0:8])),
-		oct2Style.Render(string(m.subnetBinary[8:16])),
-		oct3Style.Render(string(m.subnetBinary[16:24])),
-		oct4Style.Render(string(m.subnetBinary[24:32])),
+		oct1Style.Width(9).Render(string(m.ipBinary[0:8])),
+		oct2Style.Width(9).Render(string(m.ipBinary[8:16])),
+		oct3Style.Width(9).Render(string(m.ipBinary[16:24])),
+		oct4Style.Width(9).Render(string(m.ipBinary[24:32])),
+		oct1Style.Width(9).Render(string(m.subnetBinary[0:8])),
+		oct2Style.Width(9).Render(string(m.subnetBinary[8:16])),
+		oct3Style.Width(9).Render(string(m.subnetBinary[16:24])),
+		oct4Style.Width(9).Render(string(m.subnetBinary[24:32])),
 		m.netaddr.PrintDecimal(),
 		m.broadcastaddr.PrintDecimal(),
 		m.err,
@@ -247,3 +251,58 @@ func (m *model) updateIPSubnetmask() {
 	m.err = m.subnetmask.SetAddress(ss)
 	m.err = m.subnetmask.CheckIfValidSubnetmask()
 }
+/*func (m model) View() string {
+	return fmt.Sprintf(
+		` IP-Calculator
+
+IP-address
+ %s %s %s %s
+ %s %s %s %s
+
+ Binary
+ %s.%s.%s.%s
+
+ Subnetmask
+ %s %s %s %s
+ %s %s %s %s
+
+ Binary
+ %s.%s.%s.%s
+
+ netaddr
+ %s
+ broadcast
+ %s
+ %s
+ %s
+`,
+		inputStyle.Width(5).Render("Oct1"),
+		inputStyle.Width(5).Render("Oct2"),
+		inputStyle.Width(5).Render("Oct3"),
+		inputStyle.Width(5).Render("Oct4"),
+		m.inputs[0].View(),
+		m.inputs[1].View(),
+		m.inputs[2].View(),
+		m.inputs[3].View(),
+		oct1Style.Width(9).Render(string(m.ipBinary[0:8])),
+		oct2Style.Width(9).Render(string(m.ipBinary[8:16])),
+		oct3Style.Width(9).Render(string(m.ipBinary[16:24])),
+		oct4Style.Width(9).Render(string(m.ipBinary[24:32])),
+		inputStyle.Width(5).Render("Oct1"),
+		inputStyle.Width(5).Render("Oct2"),
+		inputStyle.Width(5).Render("Oct3"),
+		inputStyle.Width(5).Render("Oct4"),
+		m.inputs[4].View(),
+		m.inputs[5].View(),
+		m.inputs[6].View(),
+		m.inputs[7].View(),
+		oct1Style.Width(9).Render(string(m.subnetBinary[0:8])),
+		oct2Style.Width(9).Render(string(m.subnetBinary[8:16])),
+		oct3Style.Width(9).Render(string(m.subnetBinary[16:24])),
+		oct4Style.Width(9).Render(string(m.subnetBinary[24:32])),
+		m.netaddr.PrintDecimal(),
+		m.broadcastaddr.PrintDecimal(),
+		m.err,
+		continueStyle.Render("Continue ->"),
+	) + "\n"
+}*/

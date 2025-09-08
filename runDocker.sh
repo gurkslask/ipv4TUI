@@ -1,6 +1,2 @@
-# ipv4TUI
-A TUI for calculating ip adress for IPv4 
-
-## Run with docker
     docker build -t ipv4tui .
     docker run -it --rm --name test ipv4tui
