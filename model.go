@@ -43,6 +43,9 @@ type model struct {
 	subnetBinary  string
 	netaddr       IPv4
 	broadcastaddr IPv4
+	CIDR          int
+	numHosts      int
+	numNets       int
 }
 
 func initialModel() model {
@@ -154,6 +157,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.broadcastaddr = CalcBroadcastAddress(m.ipaddr, m.subnetmask)
 			m.ipBinary = m.ipaddr.PrintBinary()
 			m.subnetBinary = m.subnetmask.PrintBinary()
+			m.CIDR = CalcCIDR(m.subnetmask)
+			m.numNets, m.numHosts = CalcCombinations(m.CIDR)
 		case tea.KeyCtrlC, tea.KeyEsc:
 			return m, tea.Quit
 		case tea.KeyShiftTab, tea.KeyCtrlP:
@@ -192,6 +197,12 @@ func (m model) View() string {
  %s
  broadcast
  %s
+ CIDR
+ %d
+ Number of hosts:
+ %d
+ Number of nets:
+ %d
  %s
  %s
 `,
@@ -226,6 +237,9 @@ func (m model) View() string {
 		oct4Style.Width(8).Render(string(m.subnetBinary[24:32])),
 		m.netaddr.PrintDecimal(),
 		m.broadcastaddr.PrintDecimal(),
+		m.CIDR,
+		m.numHosts,
+		m.numNets,
 		m.err,
 		continueStyle.Render("Continue ->"),
 	) + "\n"

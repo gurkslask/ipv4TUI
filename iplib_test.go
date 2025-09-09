@@ -97,7 +97,7 @@ func TestIPv4Addr(t *testing.T) {
 func TestGetByteFromBools(t *testing.T) {
 	t.Run("Test bools", func(t *testing.T) {
 		bnum := byte(255)
-		ans := []bool{true,true,true,true,true,true,true,true}
+		ans := []bool{true, true, true, true, true, true, true, true}
 		res := GetByteFromBools(ans)
 		if res != bnum {
 			t.Errorf("This byte: %08b should be %v, got: %v\n", bnum, ans, res)
@@ -105,7 +105,7 @@ func TestGetByteFromBools(t *testing.T) {
 	})
 	t.Run("Test bools 192", func(t *testing.T) {
 		bnum := byte(192)
-		ans := []bool{true,true,false,false,false,false,false,false}
+		ans := []bool{true, true, false, false, false, false, false, false}
 		res := GetByteFromBools(ans)
 		if res != bnum {
 			t.Errorf("The bits are: %v, we want number %v, we got %v", ans, bnum, res)
@@ -113,7 +113,7 @@ func TestGetByteFromBools(t *testing.T) {
 	})
 	t.Run("Test bools 192 too long", func(t *testing.T) {
 		bnum := byte(192)
-		ans := []bool{true,true,false,false,false,false,false,false, false, true}
+		ans := []bool{true, true, false, false, false, false, false, false, false, true}
 		res := GetByteFromBools(ans)
 		if res != bnum {
 			t.Errorf("The bits are: %v, we want number %v, we got %v", ans, bnum, res)
@@ -123,7 +123,7 @@ func TestGetByteFromBools(t *testing.T) {
 func TestGetBoolFromBytes(t *testing.T) {
 	t.Run("Test bools", func(t *testing.T) {
 		bnum := byte(255)
-		ans := [8]bool{true,true,true,true,true,true,true,true}
+		ans := [8]bool{true, true, true, true, true, true, true, true}
 		res := GetBoolsFromByte(bnum)
 		if res != ans {
 			t.Errorf("This byte: %08b should be %v, got: %v\n", bnum, ans, res)
@@ -131,7 +131,7 @@ func TestGetBoolFromBytes(t *testing.T) {
 	})
 	t.Run("Test bools 192", func(t *testing.T) {
 		bnum := byte(192)
-		ans := [8]bool{true,true,false,false,false,false,false,false}
+		ans := [8]bool{true, true, false, false, false, false, false, false}
 		res := GetBoolsFromByte(bnum)
 		if res != ans {
 			t.Errorf("This byte: %08b should be %v, got: %v\n", bnum, ans, res)
@@ -200,17 +200,17 @@ func TestBroadcastAddress(t *testing.T) {
 func TestCIDR(t *testing.T) {
 	t.Run("Test 24", func(t *testing.T) {
 		subnetmask, _ := NewIPv4SubnetMask("255.255.255.0")
-		ans:= 24
+		ans := 24
 		res := CalcCIDR(subnetmask)
-		if res!= ans{
+		if res != ans {
 			t.Errorf("This subnetmask %v, should have %v, got %v", subnetmask.address, ans, res)
 		}
 	})
 	t.Run("Test 8", func(t *testing.T) {
 		subnetmask, _ := NewIPv4SubnetMask("255.0.0.0")
-		ans:= 8
+		ans := 8
 		res := CalcCIDR(subnetmask)
-		if res!= ans{
+		if res != ans {
 			t.Errorf("This subnetmask %v, should have %v, got %v", subnetmask.address, ans, res)
 		}
 	})
@@ -218,14 +218,39 @@ func TestCIDR(t *testing.T) {
 func TestGetBitsFromIp(t *testing.T) {
 	t.Run("Test 192.192.0.1", func(t *testing.T) {
 		ip, _ := NewIPv4("192.192.0.1")
-		ans:= [32]bool{true,true,false,false,false,false,false,false,
-						true,true,false,false,false,false,false,false,
-						false,false,false,false,false,false,false,false,
-						false,false,false,false,false,false,false,true}
+		ans := [32]bool{true, true, false, false, false, false, false, false,
+			true, true, false, false, false, false, false, false,
+			false, false, false, false, false, false, false, false,
+			false, false, false, false, false, false, false, true}
 		res := ip.GetBits()
-		if res!= ans{
+		if res != ans {
 			t.Errorf("This ip %v, should have %v, got %v", ip.address, ans, res)
 		}
 	})
 }
-
+func TestNetHostAddresses(t *testing.T) {
+	t.Run("Test 24", func(t *testing.T) {
+		subnetmask := 24
+		ansNet := 16777214
+		ansHost := 254
+		resNet, resHost := CalcCombinations(subnetmask)
+		if resNet != ansNet {
+			t.Errorf("This subnetmask %v, should have %v Host addresses, got %v", subnetmask, ansNet, resNet)
+		}
+		if resHost != ansHost {
+			t.Errorf("This subnetmask %v, should have %v Host addresses, got %v", subnetmask, ansHost, resHost)
+		}
+	})
+	t.Run("Test 16", func(t *testing.T) {
+		subnetmask := 16
+		ansNet := 65534
+		ansHost := 65534
+		resNet, resHost := CalcCombinations(subnetmask)
+		if resNet != ansNet {
+			t.Errorf("This subnetmask %v, should have %v Host addresses, got %v", subnetmask, ansNet, resNet)
+		}
+		if resHost != ansHost {
+			t.Errorf("This subnetmask %v, should have %v Host addresses, got %v", subnetmask, ansHost, resHost)
+		}
+	})
+}

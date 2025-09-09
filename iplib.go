@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
 )
@@ -137,6 +138,7 @@ func (ip IPv4) PrintBinary() string {
 	}
 	return sb.String()
 }
+
 // Returns [4]byte of the ip adress in 4 bytes
 func (ip IPv4) Getbytes() [4]byte {
 	var sb [4]byte
@@ -145,6 +147,7 @@ func (ip IPv4) Getbytes() [4]byte {
 	}
 	return sb
 }
+
 // Returns [32]bool of all the bits
 func (ip IPv4) GetBits() [32]bool {
 	var res [32]bool
@@ -152,7 +155,7 @@ func (ip IPv4) GetBits() [32]bool {
 	for octetnum, octetbyte := range b {
 		bb := GetBoolsFromByte(octetbyte)
 		for bitnum, bit := range bb {
-			res[bitnum + octetnum * 8] = bit
+			res[bitnum+octetnum*8] = bit
 		}
 	}
 	return res
@@ -199,8 +202,9 @@ func CalcNetAddress(ip IPv4, subnetmask IPv4) IPv4 {
 	resIP, _ := NewIPv4FromBinary(bb)
 	return resIP
 }
+
 // Calculates a broadcastaddress based on a ip and subnetmask, returns IPv4 struct
-func CalcBroadcastAddress (ip IPv4, subnetmask IPv4) IPv4 {
+func CalcBroadcastAddress(ip IPv4, subnetmask IPv4) IPv4 {
 	cidr := CalcCIDR(subnetmask)
 	ipb := ip.GetBits()
 	smb := subnetmask.GetBits()
@@ -214,19 +218,42 @@ func CalcBroadcastAddress (ip IPv4, subnetmask IPv4) IPv4 {
 		}
 	}
 	for i := range 4 {
-		bb[i] = GetByteFromBools(res[i * 8 : i * 8 + 8])
+		bb[i] = GetByteFromBools(res[i*8 : i*8+8])
 	}
 	resIP, _ := NewIPv4FromBinary(bb)
 	return resIP
 }
+
 // Calculates a CIDR address from a subnet mask. Example: 255.255.255.0 = 24
 func CalcCIDR(subnetmask IPv4) int {
 	res := 0
 	for _, v := range subnetmask.Getbytes() {
 		bb := GetBoolsFromByte(v)
 		for _, bit := range bb {
-			if bit { res = res + 1} else { return res}
+			if bit {
+				res = res + 1
+			} else {
+				return res
+			}
 		}
 	}
 	return res
+}
+
+// This function calculates the amount of host addresses and net addresses
+// with a given cidr (subnetmask). The function excludes Net-address and Broadcast-address
+// Returns netaddress, host address
+func CalcCombinations(cidr int) (int, int) {
+	netaddresses := 0
+	for i := range cidr {
+		netaddresses += int(math.Pow(2, float64(i)))
+	}
+	netaddresses -= 1
+	hostaddresses := 0
+	for i := range 32 - cidr {
+		hostaddresses += int(math.Pow(2, float64(i)))
+	}
+	hostaddresses -= 1
+	return netaddresses, hostaddresses
+
 }
