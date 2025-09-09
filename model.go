@@ -16,9 +16,9 @@ const (
 	hotPink  = lipgloss.Color("#FF06B7")
 	darkGray = lipgloss.Color("#767676")
 	ColorR1  = lipgloss.Color("#DC243C")
-	ColorR2 = lipgloss.Color("#F75270")
-	ColorR3 = lipgloss.Color("#F7CAC9")
-	ColorR4 = lipgloss.Color("#FDEBD0")
+	ColorR2  = lipgloss.Color("#F75270")
+	ColorR3  = lipgloss.Color("#F7CAC9")
+	ColorR4  = lipgloss.Color("#FDEBD0")
 	ColorBG1 = lipgloss.Color("#BADA55")
 	ColorBG2 = lipgloss.Color("#FFFA55")
 )
@@ -30,18 +30,18 @@ var (
 	oct2Style     = lipgloss.NewStyle().Foreground(ColorR2)
 	oct3Style     = lipgloss.NewStyle().Foreground(ColorR3)
 	oct4Style     = lipgloss.NewStyle().Foreground(ColorR4)
-	staticStyle    = lipgloss.NewStyle()
+	staticStyle   = lipgloss.NewStyle()
 )
 
 type model struct {
-	inputs       []textinput.Model // ipv4 Octets
-	focused      int               // which item our cursor is pointing at
-	err          error             // error?
-	ipaddr       IPv4              // the ip address
-	ipBinary     string
-	subnetmask   IPv4
-	subnetBinary string
-	netaddr	IPv4
+	inputs        []textinput.Model // ipv4 Octets
+	focused       int               // which item our cursor is pointing at
+	err           error             // error?
+	ipaddr        IPv4              // the ip address
+	ipBinary      string
+	subnetmask    IPv4
+	subnetBinary  string
+	netaddr       IPv4
 	broadcastaddr IPv4
 }
 
@@ -125,12 +125,12 @@ func initialModel() model {
 	inputs[7].Validate = octetValidator
 	inputs[7].TextStyle = inputStyle
 	return model{
-		ipaddr:     ip,
-		subnetmask: snm,
-		inputs:     inputs,
-		focused:    0,
-		err:        nil,
-		ipBinary: ipBinary,
+		ipaddr:       ip,
+		subnetmask:   snm,
+		inputs:       inputs,
+		focused:      0,
+		err:          nil,
+		ipBinary:     ipBinary,
 		subnetBinary: subnetBinary,
 	}
 }
@@ -198,14 +198,14 @@ func (m model) View() string {
 
 		staticStyle.Width(41).Render("IP-address"),
 		staticStyle.Width(20).Render("Subnetmask"),
-		staticStyle.Width(5).Render("Oct1"),
-		staticStyle.Width(5).Render("Oct2"),
-		staticStyle.Width(5).Render("Oct3"),
-		staticStyle.Width(26).Render("Oct4"),
-		staticStyle.Width(5).Render("Oct1"),
-		staticStyle.Width(5).Render("Oct2"),
-		staticStyle.Width(5).Render("Oct3"),
-		staticStyle.Width(5).Render("Oct4"),
+		staticStyle.Width(9).Render("Oct1"),
+		staticStyle.Width(9).Render("Oct2"),
+		staticStyle.Width(9).Render("Oct3"),
+		staticStyle.Width(14).Render("Oct4"),
+		staticStyle.Width(9).Render("Oct1"),
+		staticStyle.Width(9).Render("Oct2"),
+		staticStyle.Width(9).Render("Oct3"),
+		staticStyle.Width(9).Render("Oct4"),
 		m.inputs[0].View(),
 		m.inputs[1].View(),
 		m.inputs[2].View(),
@@ -257,6 +257,7 @@ func (m *model) updateIPSubnetmask() {
 	m.err = m.subnetmask.SetAddress(ss)
 	m.err = m.subnetmask.CheckIfValidSubnetmask()
 }
+
 /*func (m model) View() string {
 	return fmt.Sprintf(
 		` IP-Calculator
