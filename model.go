@@ -6,7 +6,7 @@ import (
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	iplib "github.com/gurkslask/ipV4TUI/src"
+	iplib "github.com/gurkslask/ipV4TUI/iplib"
 )
 
 type (
@@ -53,7 +53,7 @@ type model struct {
 	numNets       int
 }
 
-func initialModel() model {
+func InitialModel() model {
 	ip, _ := iplib.NewIPv4("1.2.3.4")
 	snm, _ := iplib.NewIPv4("255.255.255.0")
 	var inputs []textinput.Model = make([]textinput.Model, 8)
