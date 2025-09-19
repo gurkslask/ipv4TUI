@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"os"
 	"strconv"
 	"strings"
-	"math"
 )
 
 // Takes a slice of ints and returns sum
@@ -233,22 +233,23 @@ func RemoveFromSliceOrder(s []int, index int) []int {
 // Take a byte of length 8 and extract [8]bool
 func GetBoolsFromByte(b byte) [8]bool {
 	var res [8]bool
-	for i := range 8{
+	for i := range 8 {
 		bf := math.Pow(2.0, float64(i))
 		bb := byte(bf)
-		if bb & b >> i == 1 {
-			res[len(res)-i-1] =  true
+		if bb&b>>i == 1 {
+			res[len(res)-i-1] = true
 		} else {
 			res[len(res)-i-1] = false
 		}
 	}
 	return res
 }
+
 // Takes a slice of bools, returns the byte of the 8 first bits
 func GetByteFromBools(b []bool) byte {
 	res := 0
 	for k := range 8 {
-	//for k, v := range b {
+		//for k, v := range b {
 		if b[k] {
 			res += int(math.Pow(2.0, float64(7-k)))
 		}

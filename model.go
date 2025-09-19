@@ -6,6 +6,7 @@ import (
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	iplib "github.com/gurkslask/ipV4TUI/src"
 )
 
 type (
@@ -13,14 +14,17 @@ type (
 )
 
 const (
-	hotPink  = lipgloss.Color("#FF06B7")
-	darkGray = lipgloss.Color("#767676")
-	ColorR1  = lipgloss.Color("#DC243C")
-	ColorR2  = lipgloss.Color("#F75270")
-	ColorR3  = lipgloss.Color("#F7CAC9")
-	ColorR4  = lipgloss.Color("#FDEBD0")
-	ColorBG1 = lipgloss.Color("#BADA55")
-	ColorBG2 = lipgloss.Color("#FFFA55")
+	hotPink    = lipgloss.Color("#FF06B7")
+	darkGray   = lipgloss.Color("#767676")
+	ColorR1    = lipgloss.Color("#DC243C")
+	ColorR2    = lipgloss.Color("#F75270")
+	ColorR3    = lipgloss.Color("#F7CAC9")
+	ColorR4    = lipgloss.Color("#FDEBD0")
+	ColorBG1   = lipgloss.Color("#BADA55")
+	ColorBG2   = lipgloss.Color("#FFFA55")
+	ColorGreen = lipgloss.Color("#00FF11")
+	ColorWhite = lipgloss.Color("#FFFFFF")
+	ColorBlack = lipgloss.Color("#000000")
 )
 
 var (
@@ -31,26 +35,27 @@ var (
 	oct3Style     = lipgloss.NewStyle().Foreground(ColorR3)
 	oct4Style     = lipgloss.NewStyle().Foreground(ColorR4)
 	staticStyle   = lipgloss.NewStyle()
+	outputStyle   = lipgloss.NewStyle().Foreground(ColorGreen).Background(ColorBlack)
 )
 
 type model struct {
 	inputs        []textinput.Model // ipv4 Octets
 	focused       int               // which item our cursor is pointing at
 	err           error             // error?
-	ipaddr        IPv4              // the ip address
+	ipaddr        iplib.IPv4        // the ip address
 	ipBinary      string
-	subnetmask    IPv4
+	subnetmask    iplib.IPv4
 	subnetBinary  string
-	netaddr       IPv4
-	broadcastaddr IPv4
+	netaddr       iplib.IPv4
+	broadcastaddr iplib.IPv4
 	CIDR          int
 	numHosts      int
 	numNets       int
 }
 
 func initialModel() model {
-	ip, _ := NewIPv4("1.2.3.4")
-	snm, _ := NewIPv4("255.255.255.0")
+	ip, _ := iplib.NewIPv4("1.2.3.4")
+	snm, _ := iplib.NewIPv4("255.255.255.0")
 	var inputs []textinput.Model = make([]textinput.Model, 8)
 	ipBinary := ip.PrintBinary()
 	subnetBinary := snm.PrintBinary()
@@ -62,7 +67,7 @@ func initialModel() model {
 	inputs[0].CharLimit = 3
 	inputs[0].Width = 7
 	inputs[0].Prompt = ""
-	inputs[0].Validate = octetValidator
+	inputs[0].Validate = iplib.OctetValidator
 	inputs[0].TextStyle = inputStyle
 
 	inputs[1] = textinput.New()
@@ -71,7 +76,7 @@ func initialModel() model {
 	inputs[1].CharLimit = 3
 	inputs[1].Width = 7
 	inputs[1].Prompt = ""
-	inputs[1].Validate = octetValidator
+	inputs[1].Validate = iplib.OctetValidator
 	inputs[1].TextStyle = inputStyle
 
 	inputs[2] = textinput.New()
@@ -80,7 +85,7 @@ func initialModel() model {
 	inputs[2].CharLimit = 3
 	inputs[2].Width = 7
 	inputs[2].Prompt = ""
-	inputs[2].Validate = octetValidator
+	inputs[2].Validate = iplib.OctetValidator
 	inputs[2].TextStyle = inputStyle
 
 	inputs[3] = textinput.New()
@@ -89,7 +94,7 @@ func initialModel() model {
 	inputs[3].CharLimit = 3
 	inputs[3].Width = 11
 	inputs[3].Prompt = ""
-	inputs[3].Validate = octetValidator
+	inputs[3].Validate = iplib.OctetValidator
 	inputs[3].TextStyle = inputStyle
 
 	inputs[4] = textinput.New()
@@ -98,7 +103,7 @@ func initialModel() model {
 	inputs[4].CharLimit = 3
 	inputs[4].Width = 7
 	inputs[4].Prompt = ""
-	inputs[4].Validate = octetValidator
+	inputs[4].Validate = iplib.OctetValidator
 	inputs[4].TextStyle = inputStyle
 
 	inputs[5] = textinput.New()
@@ -107,7 +112,7 @@ func initialModel() model {
 	inputs[5].CharLimit = 3
 	inputs[5].Width = 7
 	inputs[5].Prompt = ""
-	inputs[5].Validate = octetValidator
+	inputs[5].Validate = iplib.OctetValidator
 	inputs[5].TextStyle = inputStyle
 
 	inputs[6] = textinput.New()
@@ -116,7 +121,7 @@ func initialModel() model {
 	inputs[6].CharLimit = 3
 	inputs[6].Width = 7
 	inputs[6].Prompt = ""
-	inputs[6].Validate = octetValidator
+	inputs[6].Validate = iplib.OctetValidator
 	inputs[6].TextStyle = inputStyle
 
 	inputs[7] = textinput.New()
@@ -125,7 +130,7 @@ func initialModel() model {
 	inputs[7].CharLimit = 3
 	inputs[7].Width = 7
 	inputs[7].Prompt = ""
-	inputs[7].Validate = octetValidator
+	inputs[7].Validate = iplib.OctetValidator
 	inputs[7].TextStyle = inputStyle
 	return model{
 		ipaddr:       ip,
@@ -153,12 +158,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			//}
 			m.updateIPAddress()
 			m.updateIPSubnetmask()
-			m.netaddr = CalcNetAddress(m.ipaddr, m.subnetmask)
-			m.broadcastaddr = CalcBroadcastAddress(m.ipaddr, m.subnetmask)
+			m.netaddr = iplib.CalcNetAddress(m.ipaddr, m.subnetmask)
+			m.broadcastaddr = iplib.CalcBroadcastAddress(m.ipaddr, m.subnetmask)
 			m.ipBinary = m.ipaddr.PrintBinary()
 			m.subnetBinary = m.subnetmask.PrintBinary()
-			m.CIDR = CalcCIDR(m.subnetmask)
-			m.numNets, m.numHosts = CalcCombinations(m.CIDR)
+			m.CIDR = iplib.CalcCIDR(m.subnetmask)
+			m.numNets, m.numHosts = iplib.CalcCombinations(m.CIDR)
 		case tea.KeyCtrlC, tea.KeyEsc:
 			return m, tea.Quit
 		case tea.KeyShiftTab, tea.KeyCtrlP:
@@ -198,7 +203,7 @@ func (m model) View() string {
  broadcast
  %s
  CIDR
- %d
+ %s
  Number of hosts:
  %d
  Number of nets:
@@ -237,7 +242,7 @@ func (m model) View() string {
 		oct4Style.Width(8).Render(string(m.subnetBinary[24:32])),
 		m.netaddr.PrintDecimal(),
 		m.broadcastaddr.PrintDecimal(),
-		m.CIDR,
+		outputStyle.Render(string(m.CIDR)),
 		m.numHosts,
 		m.numNets,
 		m.err,
