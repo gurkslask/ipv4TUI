@@ -1,0 +1,4 @@
+github.com/gurkslask/common-go-libs v0.0.0-20250919062850-ead818551dfa h1:fgn7q5zlcJFoZnXphhPfdgA+VJpHJK3kc5TnAyEoJPI=
+github.com/gurkslask/common-go-libs v0.0.0-20250919062850-ead818551dfa/go.mod h1:APZxb+gTemUxWUvo+4ayQz4Sq37ZmzpBjDF154m/v0Y=
+github.com/gurkslask/common-go-libs/common v0.0.0-20250919075500-395aaae2c00f h1:L3WO4f9qltey3LiKvV/wFWsVlEKyp3JO+37UEMQnRLg=
+github.com/gurkslask/common-go-libs/common v0.0.0-20250919075500-395aaae2c00f/go.mod h1:xqwZIL6Ay/rt66gOwS1cXit3alRGyAACeUPY0vqoac4=
