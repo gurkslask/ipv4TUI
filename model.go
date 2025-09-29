@@ -7,6 +7,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	iplib "github.com/gurkslask/ipV4TUI/iplib"
+	common "github.com/gurkslask/common-go-libs/common"
 )
 
 type (
@@ -180,9 +181,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.err = msg
 		return m, nil
 	}
+	if m.err == nil {m.err = fmt.Errorf("")}
 
 	for i := range m.inputs {
 		m.inputs[i], cmds[i] = m.inputs[i].Update(msg)
+		if m.inputs[i].Err != nil {
+			m.err = m.inputs[i].Err
+		}
 	}
 	return m, tea.Batch(cmds...)
 }
@@ -197,7 +202,7 @@ func (m model) View() string {
  %s%s
  %s.%s.%s.%s  %s.%s.%s.%s
 
- Binary
+ %s
  netaddr
  %s
  broadcast
@@ -205,9 +210,9 @@ func (m model) View() string {
  CIDR
  %s
  Number of hosts:
- %d
+ %s
  Number of nets:
- %d
+ %s
  %s
  %s
 `,
@@ -240,11 +245,14 @@ func (m model) View() string {
 		oct2Style.Width(8).Render(string(m.subnetBinary[8:16])),
 		oct3Style.Width(8).Render(string(m.subnetBinary[16:24])),
 		oct4Style.Width(8).Render(string(m.subnetBinary[24:32])),
-		m.netaddr.PrintDecimal(),
-		m.broadcastaddr.PrintDecimal(),
-		outputStyle.Render(string(m.CIDR)),
-		m.numHosts,
-		m.numNets,
+		//m.netaddr.PrintDecimal(),
+		//common.IntToStr(m.CIDR),
+		outputStyle.Render(m.netaddr.PrintDecimal() + "/" + common.IntToStr(m.CIDR)),
+		outputStyle.Render(m.netaddr.PrintDecimal()),
+		outputStyle.Render(m.broadcastaddr.PrintDecimal()),
+		outputStyle.Render(common.IntToStr(m.CIDR)),
+		outputStyle.Render(common.IntToStr(m.numHosts)),
+		outputStyle.Render(common.IntToStr(m.numNets)),
 		m.err,
 		continueStyle.Render("Continue ->"),
 	) + "\n"
